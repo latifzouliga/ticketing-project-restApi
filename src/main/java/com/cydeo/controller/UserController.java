@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.List;
 
 @RestController
@@ -20,14 +21,19 @@ public class UserController {
     }
 
     @GetMapping
+    @RolesAllowed("Admin")
     public ResponseEntity<ResponseWrapper> getUsers() {
+
         List<UserDTO> userDTOList = userService.listAllUsers();
+        String message = userDTOList.isEmpty() ? "There are no users to show" : "Users retrieved Successfully";
+
         return ResponseEntity.ok(
-                new ResponseWrapper("Users retrieved Successfully", userDTOList, HttpStatus.OK)
+                new ResponseWrapper(message, userDTOList, HttpStatus.OK)
         );
     }
 
     @GetMapping("/{username}")
+    @RolesAllowed("Admin")
     private ResponseEntity<ResponseWrapper> getUser(@PathVariable String username) {
         return ResponseEntity.ok(
                 new ResponseWrapper("User retrieved Successfully", userService.findByUserName(username), HttpStatus.OK)
@@ -36,24 +42,27 @@ public class UserController {
 
 
     @PostMapping
+    @RolesAllowed("Admin")
     public ResponseEntity<ResponseWrapper> createUser(@RequestBody UserDTO userDTO) {
         userService.save(userDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(
-                        new ResponseWrapper("A new Spartan is created",userDTO ,HttpStatus.CREATED)
+                        new ResponseWrapper("A new Spartan is created", userDTO, HttpStatus.CREATED)
                 );
     }
 
 
     @PutMapping
-    private ResponseEntity<ResponseWrapper> updateUser(@RequestBody UserDTO userDTO){
+    @RolesAllowed("Admin")
+    private ResponseEntity<ResponseWrapper> updateUser(@RequestBody UserDTO userDTO) {
         userService.update(userDTO);
         return ResponseEntity.ok(
-                new ResponseWrapper("User updated Successfully",userDTO, HttpStatus.OK)
+                new ResponseWrapper("User updated Successfully", userDTO, HttpStatus.OK)
         );
     }
 
     @DeleteMapping("/{username}")
+    @RolesAllowed("Admin")
     private ResponseEntity<ResponseWrapper> deleteUser(@PathVariable String username) {
         userService.deleteByUserName(username);
         return ResponseEntity.ok(new ResponseWrapper("User deleted Successfully", HttpStatus.NO_CONTENT));
