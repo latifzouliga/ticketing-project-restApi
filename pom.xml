@@ -85,7 +85,6 @@
             <artifactId>keycloak-admin-client</artifactId>
             <version>18.0.0</version>
         </dependency>
-
         <dependency>
             <groupId>org.jboss.spec.javax.ws.rs</groupId>
             <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
