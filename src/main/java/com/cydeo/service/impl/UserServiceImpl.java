@@ -90,16 +90,19 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
         }
 
+        keycloakService.delete(username);
+
     }
 
     private boolean checkIfUserCanBeDeleted(User user) {
 
+        List<ProjectDTO> projectDTOList = projectService.readAllByAssignedManager(user);
+        List<TaskDTO> taskDTOList = taskService.readAllByAssignedEmployee(user);
+
         switch (user.getRole().getDescription()) {
             case "Manager":
-                List<ProjectDTO> projectDTOList = projectService.readAllByAssignedManager(user);
                 return projectDTOList.size() == 0;
             case "Employee":
-                List<TaskDTO> taskDTOList = taskService.readAllByAssignedEmployee(user);
                 return taskDTOList.size() == 0;
             default:
                 return true;
