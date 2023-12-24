@@ -4,6 +4,7 @@ import com.cydeo.dto.ProjectDTO;
 import com.cydeo.dto.TaskDTO;
 import com.cydeo.entity.User;
 import com.cydeo.enums.Status;
+import com.cydeo.exception.TicketingProjectException;
 
 import java.util.List;
 
@@ -21,11 +22,11 @@ public interface TaskService {
 
     void completeByProject(ProjectDTO project);
 
-    List<TaskDTO> listAllTasksByStatusIsNot(Status status);
+    List<TaskDTO> listAllTasksByStatusIsNot(Status status) throws TicketingProjectException;
 
     void updateStatus(TaskDTO task);
 
-    List<TaskDTO> listAllTasksByStatus(Status status);
+    List<TaskDTO> listAllTasksByStatus(Status status) throws TicketingProjectException;
 
     List<TaskDTO> readAllByAssignedEmployee(User assignedEmployee);
 
