@@ -5,6 +5,7 @@ import com.cydeo.dto.TaskDTO;
 import com.cydeo.entity.Task;
 import com.cydeo.entity.User;
 import com.cydeo.enums.Status;
+import com.cydeo.exception.TicketingProjectException;
 import com.cydeo.mapper.ProjectMapper;
 import com.cydeo.mapper.TaskMapper;
 import com.cydeo.repository.TaskRepository;
@@ -112,13 +113,15 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskDTO> listAllTasksByStatusIsNot(Status status) {
+    public List<TaskDTO> listAllTasksByStatusIsNot(Status status) throws TicketingProjectException {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         SimpleKeycloakAccount details = (SimpleKeycloakAccount) authentication.getDetails();
         String username = details.getKeycloakSecurityContext().getToken().getPreferredUsername();
 
-        User loggedInUser = userRepository.findByUserName(username);
+        User loggedInUser = userRepository
+                .findByUserName(username).
+                orElseThrow(() -> new TicketingProjectException("User can not be found"));
 
         List<Task> list = taskRepository.findAllByTaskStatusIsNotAndAssignedEmployee(status, loggedInUser);
         return list.stream().map(taskMapper::convertToDTO).collect(Collectors.toList());
@@ -137,13 +140,15 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskDTO> listAllTasksByStatus(Status status) {
+    public List<TaskDTO> listAllTasksByStatus(Status status) throws TicketingProjectException {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         SimpleKeycloakAccount details = (SimpleKeycloakAccount) authentication.getDetails();
         String username = details.getKeycloakSecurityContext().getToken().getPreferredUsername();
 
-        User loggedInUser = userRepository.findByUserName(username);
+        User loggedInUser = userRepository
+                .findByUserName(username).
+                orElseThrow(() -> new TicketingProjectException("User can not be found"));;
         List<Task> list = taskRepository.findAllByTaskStatusAndAssignedEmployee(status, loggedInUser);
         return list.stream().map(taskMapper::convertToDTO).collect(Collectors.toList());
     }

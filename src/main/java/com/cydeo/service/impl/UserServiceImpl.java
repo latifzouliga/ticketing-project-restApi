@@ -4,6 +4,7 @@ import com.cydeo.dto.ProjectDTO;
 import com.cydeo.dto.TaskDTO;
 import com.cydeo.dto.UserDTO;
 import com.cydeo.entity.User;
+import com.cydeo.exception.TicketingProjectException;
 import com.cydeo.mapper.UserMapper;
 import com.cydeo.repository.UserRepository;
 import com.cydeo.service.KeycloakService;
@@ -42,8 +43,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO findByUserName(String username) {
-        User user = userRepository.findByUserName(username);
+    public UserDTO findByUserName(String username) throws TicketingProjectException {
+        User user = userRepository
+                .findByUserName(username).
+                orElseThrow(() -> new TicketingProjectException("User can not be found"));;
         return userMapper.convertToDTO(user);
     }
 
@@ -60,10 +63,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO update(UserDTO dto) {
+    public UserDTO update(UserDTO dto) throws TicketingProjectException {
 
        //Find current user
-        User user = userRepository.findByUserName(dto.getUserName());
+        User user = userRepository
+                .findByUserName(dto.getUserName()).
+                orElseThrow(() -> new TicketingProjectException("User can not be found"));;
         //Map updated user dto to entity object
         User convertedUser = userMapper.convertToEntity(dto);
         //set id to converted object
@@ -81,16 +86,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void delete(String username) {
-        User user = userRepository.findByUserName(username);
+    public void delete(String username) throws TicketingProjectException {
+        User user = userRepository
+                .findByUserName(username).
+                orElseThrow(() -> new TicketingProjectException("User can not be found"));;
 
         if (checkIfUserCanBeDeleted(user)) {
             user.setIsDeleted(true);
             user.setUserName(user.getUserName() + "-" + user.getId());
             userRepository.save(user);
+            keycloakService.delete(username);
+        }else {
+            throw new TicketingProjectException("User can not deleted");
         }
 
-        keycloakService.delete(username);
 
     }
 
@@ -101,9 +110,9 @@ public class UserServiceImpl implements UserService {
 
         switch (user.getRole().getDescription()) {
             case "Manager":
-                return projectDTOList.size() == 0;
+                return projectDTOList.isEmpty();
             case "Employee":
-                return taskDTOList.size() == 0;
+                return taskDTOList.isEmpty();
             default:
                 return true;
         }

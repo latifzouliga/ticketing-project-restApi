@@ -3,6 +3,7 @@ package com.cydeo.controller;
 
 import com.cydeo.dto.ProjectDTO;
 import com.cydeo.entity.ResponseWrapper;
+import com.cydeo.exception.TicketingProjectException;
 import com.cydeo.service.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -81,7 +82,7 @@ public class ProjectController {
     @GetMapping("/manager/project-status")
     @RolesAllowed("Manager")
     @Operation(summary = "Get project status")
-    public ResponseEntity<ResponseWrapper> getProjectsStatus() {
+    public ResponseEntity<ResponseWrapper> getProjectsStatus() throws TicketingProjectException {
         List<ProjectDTO> projects = projectService.listAllProjectDetails();
         return ResponseEntity.ok(
                 new ResponseWrapper("Successfully retrieved completed projects", projects, HttpStatus.OK)

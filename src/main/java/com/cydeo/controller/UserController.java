@@ -1,7 +1,9 @@
 package com.cydeo.controller;
 
+import com.cydeo.annotation.DefaultExceptionMessage;
 import com.cydeo.dto.UserDTO;
 import com.cydeo.entity.ResponseWrapper;
+import com.cydeo.exception.TicketingProjectException;
 import com.cydeo.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -42,7 +44,7 @@ public class UserController {
     @GetMapping("/{username}")
     @RolesAllowed("Admin")
     @Operation(summary = "Get User by username")
-    private ResponseEntity<ResponseWrapper> getUser(@PathVariable String username) {
+    private ResponseEntity<ResponseWrapper> getUser(@PathVariable String username) throws TicketingProjectException {
         return ResponseEntity.ok(
                 new ResponseWrapper("User retrieved Successfully", userService.findByUserName(username), HttpStatus.OK)
         );
@@ -64,7 +66,7 @@ public class UserController {
     @PutMapping
     @RolesAllowed("Admin")
     @Operation(summary = "Update user")
-    private ResponseEntity<ResponseWrapper> updateUser(@RequestBody UserDTO userDTO) {
+    private ResponseEntity<ResponseWrapper> updateUser(@RequestBody UserDTO userDTO) throws TicketingProjectException {
         userService.update(userDTO);
         return ResponseEntity.ok(
                 new ResponseWrapper("User updated Successfully", userDTO, HttpStatus.OK)
@@ -74,11 +76,14 @@ public class UserController {
     @DeleteMapping("/{username}")
     @RolesAllowed("Admin")
     @Operation(summary = "Delete user")
-    private ResponseEntity<ResponseWrapper> deleteUser(@PathVariable String username) {
-        userService.deleteByUserName(username);
-        return ResponseEntity.ok(new ResponseWrapper("User deleted Successfully", HttpStatus.NO_CONTENT));
-//        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-//                .body(new ResponseWrapper("User deleted Successfully", HttpStatus.NO_CONTENT));
+    @DefaultExceptionMessage(defaultMessage = "Failed to delete user bro")
+    private ResponseEntity<ResponseWrapper> deleteUser(@PathVariable String username) throws TicketingProjectException {
+        userService.delete(username);
+        return ResponseEntity.ok(
+                new ResponseWrapper("User deleted Successfully", HttpStatus.NO_CONTENT)
+        );
+        // return ResponseEntity.status(HttpStatus.NO_CONTENT)
+        //       .body(new ResponseWrapper("User deleted Successfully", HttpStatus.NO_CONTENT));
     }
 
 }

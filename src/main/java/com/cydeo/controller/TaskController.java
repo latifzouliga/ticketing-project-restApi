@@ -3,6 +3,7 @@ package com.cydeo.controller;
 import com.cydeo.dto.TaskDTO;
 import com.cydeo.entity.ResponseWrapper;
 import com.cydeo.enums.Status;
+import com.cydeo.exception.TicketingProjectException;
 import com.cydeo.service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -79,7 +80,7 @@ public class TaskController {
     @GetMapping("/employee/pending-tasks")
     @RolesAllowed("Employee")
     @Operation(summary = "Get pending tasks")
-    public ResponseEntity<ResponseWrapper> employeePendingTasks() {
+    public ResponseEntity<ResponseWrapper> employeePendingTasks() throws TicketingProjectException {
        List<TaskDTO> taskDTOList = taskService.listAllTasksByStatusIsNot(Status.COMPLETE);
         return ResponseEntity.ok(
                 new ResponseWrapper("Pending tasks retrieved successfully",taskDTOList ,HttpStatus.OK)
@@ -101,7 +102,7 @@ public class TaskController {
     @GetMapping("/employee/archive")
     @RolesAllowed("Employee")
     @Operation(summary = "Get all archived tasks")
-    public ResponseEntity<ResponseWrapper> employeeArchivedTasks() {
+    public ResponseEntity<ResponseWrapper> employeeArchivedTasks() throws TicketingProjectException {
         List<TaskDTO> taskDTOList = taskService.listAllTasksByStatus(Status.COMPLETE);
         return ResponseEntity.ok(
                 new ResponseWrapper("Completed tasks retrieved successfully",taskDTOList ,HttpStatus.OK)
