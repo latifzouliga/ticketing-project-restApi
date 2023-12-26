@@ -41,8 +41,10 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectDTO getByProjectCode(String code) {
-        Project project = projectRepository.findByProjectCode(code);
+    public ProjectDTO getByProjectCode(String code) throws TicketingProjectException {
+        Project project = projectRepository
+                .findByProjectCode(code)
+                .orElseThrow(() -> new TicketingProjectException("Project cannot be found"));
         return projectMapper.convertToDto(project);
     }
 
@@ -66,9 +68,10 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void update(ProjectDTO dto) {
+    public void update(ProjectDTO dto) throws TicketingProjectException {
 
-        Project project = projectRepository.findByProjectCode(dto.getProjectCode());
+        Project project = projectRepository.findByProjectCode(dto.getProjectCode())
+                .orElseThrow(() -> new TicketingProjectException("Project cannot be found"));
         Project convertedProject = projectMapper.convertToEntity(dto);
         convertedProject.setId(project.getId());
         convertedProject.setProjectStatus(project.getProjectStatus());
@@ -80,8 +83,10 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void delete(String code) {
-        Project project = projectRepository.findByProjectCode(code);
+    public void delete(String code) throws TicketingProjectException {
+        Project project = projectRepository
+                .findByProjectCode(code)
+                .orElseThrow(() -> new TicketingProjectException("Project cannot be found"));
 
         project.setIsDeleted(true);
         project.setProjectCode(project.getProjectCode() + "-" + project.getId());
@@ -93,9 +98,11 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void complete(String projectCode) {
+    public void complete(String projectCode) throws TicketingProjectException {
 
-        Project project = projectRepository.findByProjectCode(projectCode);
+        Project project = projectRepository
+                .findByProjectCode(projectCode)
+                .orElseThrow(() -> new TicketingProjectException("Project cannot be found"));
         project.setProjectStatus(Status.COMPLETE);
 
         projectRepository.save(project);

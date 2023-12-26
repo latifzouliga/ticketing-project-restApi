@@ -31,7 +31,8 @@ public class GlobalExceptionHandler {
                 ResponseWrapper.builder()
                         .success(false)
                         .code(HttpStatus.CONFLICT.value())
-                        .message(message).build(),
+                        .message(message)
+                        .build(),
                 HttpStatus.CONFLICT);
     }
 
@@ -43,13 +44,14 @@ public class GlobalExceptionHandler {
                 ResponseWrapper.builder()
                         .success(false)
                         .code(HttpStatus.FORBIDDEN.value())
-                        .message(message).build(),
+                        .message(message)
+                        .build(),
                 HttpStatus.FORBIDDEN);
     }
 
     // any exception related with these 4 classes
     @ExceptionHandler({Exception.class, RuntimeException.class, Throwable.class, BadCredentialsException.class})
-    public ResponseEntity<ResponseWrapper> genericException(Throwable e, HandlerMethod handlerMethod) {
+    public ResponseEntity<ResponseWrapper> genericException(HandlerMethod handlerMethod) {
 
         // the first condition will execute if the exception happens in methods that are annotated with @DefaultExceptionMessage
         Optional<DefaultExceptionMessageDTO> defaultMessage = getMessageFromAnnotation(handlerMethod.getMethod());
@@ -75,11 +77,13 @@ public class GlobalExceptionHandler {
     private Optional<DefaultExceptionMessageDTO> getMessageFromAnnotation(Method method) {
         DefaultExceptionMessage defaultExceptionMessage = method.getAnnotation(DefaultExceptionMessage.class);
         if (defaultExceptionMessage != null) {
-            DefaultExceptionMessageDTO defaultExceptionMessageDto = DefaultExceptionMessageDTO
-                    .builder()
-                    .message(defaultExceptionMessage.defaultMessage())
-                    .build();
-            return Optional.of(defaultExceptionMessageDto);
+//            DefaultExceptionMessageDTO defaultExceptionMessageDto = DefaultExceptionMessageDTO
+//                    .builder()
+//                    .message(defaultExceptionMessage.defaultMessage())
+//                    .build();
+//            return Optional.of(defaultExceptionMessageDto);
+            DefaultExceptionMessageDTO message = new DefaultExceptionMessageDTO(defaultExceptionMessage.defaultMessage());
+            return Optional.of(message);
         }
         return Optional.empty();
     }
