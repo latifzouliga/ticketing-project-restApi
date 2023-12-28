@@ -1,14 +1,13 @@
 package com.cydeo.controller;
 
 import com.cydeo.annotation.DefaultExceptionMessage;
+import com.cydeo.annotation.ExecutionTime;
+import com.cydeo.dto.ProjectDTO;
 import com.cydeo.dto.UserDTO;
 import com.cydeo.entity.ResponseWrapper;
 import com.cydeo.exception.TicketingProjectException;
 import com.cydeo.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +27,7 @@ public class UserController {
         this.userService = userService;
     }
 
+    @ExecutionTime
     @GetMapping
     @RolesAllowed("Admin")
     @Operation(summary = "Get Users")
@@ -41,12 +41,14 @@ public class UserController {
         );
     }
 
-    @GetMapping("/{username}")
+    @ExecutionTime
+    @GetMapping("/{userName}")
     @RolesAllowed("Admin")
-    @Operation(summary = "Get User by username")
-    private ResponseEntity<ResponseWrapper> getUser(@PathVariable String username) throws TicketingProjectException {
+    @Operation(summary = "Get User By Username")
+    public ResponseEntity<ResponseWrapper> getUserByUserName(@PathVariable("userName") String userName) throws TicketingProjectException {
+        UserDTO user = userService.findByUserName(userName);
         return ResponseEntity.ok(
-                new ResponseWrapper("User retrieved Successfully", userService.findByUserName(username), HttpStatus.OK)
+                new ResponseWrapper("User is successfully retrieved",user,HttpStatus.OK)
         );
     }
 

@@ -55,6 +55,7 @@ public class GlobalExceptionHandler {
 
         // the first condition will execute if the exception happens in methods that are annotated with @DefaultExceptionMessage
         Optional<DefaultExceptionMessageDTO> defaultMessage = getMessageFromAnnotation(handlerMethod.getMethod());
+
         if (defaultMessage.isPresent() && !ObjectUtils.isEmpty(defaultMessage.get().getMessage())) {
             ResponseWrapper response = ResponseWrapper
                     .builder()
@@ -77,13 +78,13 @@ public class GlobalExceptionHandler {
     private Optional<DefaultExceptionMessageDTO> getMessageFromAnnotation(Method method) {
         DefaultExceptionMessage defaultExceptionMessage = method.getAnnotation(DefaultExceptionMessage.class);
         if (defaultExceptionMessage != null) {
-//            DefaultExceptionMessageDTO defaultExceptionMessageDto = DefaultExceptionMessageDTO
-//                    .builder()
-//                    .message(defaultExceptionMessage.defaultMessage())
-//                    .build();
-//            return Optional.of(defaultExceptionMessageDto);
-            DefaultExceptionMessageDTO message = new DefaultExceptionMessageDTO(defaultExceptionMessage.defaultMessage());
-            return Optional.of(message);
+            DefaultExceptionMessageDTO defaultExceptionMessageDto = DefaultExceptionMessageDTO
+                    .builder()
+                    .message(defaultExceptionMessage.defaultMessage())
+                    .build();
+            return Optional.of(defaultExceptionMessageDto);
+            //DefaultExceptionMessageDTO message = new DefaultExceptionMessageDTO(defaultExceptionMessage.defaultMessage());
+//            return Optional.of(message);
         }
         return Optional.empty();
     }
