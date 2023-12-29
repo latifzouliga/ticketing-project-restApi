@@ -1,6 +1,7 @@
 package com.cydeo.controller;
 
 
+import com.cydeo.annotation.DefaultExceptionMessage;
 import com.cydeo.dto.ProjectDTO;
 import com.cydeo.entity.ResponseWrapper;
 import com.cydeo.exception.TicketingProjectException;
@@ -38,9 +39,9 @@ public class ProjectController {
     }
 
     @GetMapping("/{projectCode}")
-    @RolesAllowed("Manager")
+    @RolesAllowed({"Manager"})
     @Operation(summary = "Get project by project code")
-    public ResponseEntity<ResponseWrapper> getProject(@PathVariable String projectCode) {
+    public ResponseEntity<ResponseWrapper> getProject(@PathVariable String projectCode) throws TicketingProjectException {
         ProjectDTO projectDTO = projectService.getByProjectCode(projectCode);
         return ResponseEntity.ok(
                 new ResponseWrapper(
@@ -53,6 +54,7 @@ public class ProjectController {
     @PostMapping
     @RolesAllowed("Manager")
     @Operation(summary = "Create a project")
+    @DefaultExceptionMessage(defaultMessage = "Something wrong with json schema")
     public ResponseEntity<ResponseWrapper> createProject(@RequestBody ProjectDTO projectDTO) {
         projectService.save(projectDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -63,7 +65,8 @@ public class ProjectController {
     @PutMapping
     @RolesAllowed("Manager")
     @Operation(summary = "Update a project")
-    public ResponseEntity<ResponseWrapper> updateProject(@RequestBody ProjectDTO projectDTO) {
+    @DefaultExceptionMessage(defaultMessage = "Something wrong with json schema")
+    public ResponseEntity<ResponseWrapper> updateProject(@RequestBody ProjectDTO projectDTO) throws TicketingProjectException {
         projectService.update(projectDTO);
         return ResponseEntity.ok(
                 new ResponseWrapper("Project updated successfully", projectDTO, HttpStatus.ACCEPTED)
@@ -73,7 +76,7 @@ public class ProjectController {
     @DeleteMapping("/{projectCode}")
     @RolesAllowed("Manager")
     @Operation(summary = "Delete a project by project code")
-    public ResponseEntity<ResponseWrapper> deleteProject(@PathVariable String projectCode) {
+    public ResponseEntity<ResponseWrapper> deleteProject(@PathVariable String projectCode) throws TicketingProjectException {
         projectService.delete(projectCode);
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .body(new ResponseWrapper("Project deleted successfully", HttpStatus.NO_CONTENT));
@@ -93,7 +96,7 @@ public class ProjectController {
     @PutMapping("/manager/complete/{projectCode}")
     @RolesAllowed("Manager")
     @Operation(summary = "Complete project by project code")
-    public ResponseEntity<ResponseWrapper> managerCompleteProject(@PathVariable String projectCode) {
+    public ResponseEntity<ResponseWrapper> managerCompleteProject(@PathVariable String projectCode) throws TicketingProjectException {
         projectService.complete(projectCode);
         return ResponseEntity.ok(
                 new ResponseWrapper("Project marked for completion successfully", projectCode, HttpStatus.ACCEPTED)

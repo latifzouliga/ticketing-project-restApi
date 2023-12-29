@@ -9,4 +9,8 @@ import lombok.Setter;
 @Builder
 public class DefaultExceptionMessageDTO {
     private String message;
+
+    public DefaultExceptionMessageDTO(String message) {
+        this.message = message;
+    }
 }

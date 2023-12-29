@@ -45,8 +45,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO findByUserName(String username) throws TicketingProjectException {
         User user = userRepository
-                .findByUserName(username).
-                orElseThrow(() -> new TicketingProjectException("User can not be found"));;
+//                .findByUserName(username).
+//                orElseThrow(() -> new TicketingProjectException("User can not be found"));;
+                .findAll().stream().filter(u -> u.getUserName().equals(username)).findFirst().get();
         return userMapper.convertToDTO(user);
     }
 

@@ -8,12 +8,12 @@ import java.util.List;
 
 public interface ProjectService {
 
-    ProjectDTO getByProjectCode(String code);
+    ProjectDTO getByProjectCode(String code) throws TicketingProjectException;
     List<ProjectDTO> listAllProjects();
     void save(ProjectDTO dto);
-    void update(ProjectDTO dto);
-    void delete(String code);
-    void complete(String projectCode);
+    void update(ProjectDTO dto) throws TicketingProjectException;
+    void delete(String code) throws TicketingProjectException;
+    void complete(String projectCode) throws TicketingProjectException;
 
     List<ProjectDTO> listAllProjectDetails() throws TicketingProjectException;
 
