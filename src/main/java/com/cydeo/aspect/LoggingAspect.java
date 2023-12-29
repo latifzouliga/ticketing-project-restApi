@@ -1,6 +1,7 @@
 package com.cydeo.aspect;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
@@ -13,9 +14,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 @Aspect
 @Configuration
+@Slf4j
 public class LoggingAspect {
 
-    Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
+    //Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
 
     // getting the username of the authorized user
     private String getUserName() {
@@ -26,7 +28,7 @@ public class LoggingAspect {
 
     @Before("execution(* com.cydeo.controller.*.*(..))")
     public void aa() {
-        logger.info("\n\n----------------- Logging started ---------------");
+        log.info("\n\n----------------- Logging started ---------------");
     }
 
     @Pointcut("execution(* com.cydeo.controller.ProjectController.*(..)) || execution(* com.cydeo.controller.TaskController.*(..))")
@@ -36,7 +38,7 @@ public class LoggingAspect {
     @Before("anyControllerOperation()")
     public void anyBeforeControllerOperationAdvice(JoinPoint joinPoint) {
         String authorizedUser = getUserName();
-        logger.info(
+        log.info(
                 "Before () -> User: {} - Method: {} - Parameter: {}",
                 authorizedUser,
                 joinPoint.getSignature().toShortString(),
@@ -47,7 +49,7 @@ public class LoggingAspect {
     @AfterReturning(pointcut = "anyControllerOperation()", returning = "results")
     public void anyAfterReturningControllerOperationAdvice(JoinPoint joinPoint, Object results) {
         String authorizedUser = getUserName();
-        logger.info("AfterReturning -> User: {} -> Method: {} -> Results: {}",
+        log.info("AfterReturning -> User: {} -> Method: {} -> Results: {}",
                 authorizedUser,
                 joinPoint.getSignature().toShortString(),
                 results.toString());
@@ -56,7 +58,7 @@ public class LoggingAspect {
     @AfterThrowing(pointcut = "anyControllerOperation()", throwing = "exception")
     public void anyAfterThrowingControllerOperationAdvice(JoinPoint joinPoint, Exception exception){
         String authorizedUser = getUserName();
-        logger.info("AfterThrowing -> User: {} -> Method: {} -> Exception: {}",
+        log.info("AfterThrowing -> User: {} -> Method: {} -> Exception: {}",
                 authorizedUser,
                 joinPoint.getSignature().toShortString(),
                 exception.getMessage());
