@@ -26,7 +26,7 @@ public class ProjectController {
     }
 
     @GetMapping
-    @RolesAllowed({"Admin","Manager"})
+    @RolesAllowed({"client_admin","client_manager"})
     @Operation(summary = "Get all projects")
     public ResponseEntity<ResponseWrapper> getProjects() {
 
