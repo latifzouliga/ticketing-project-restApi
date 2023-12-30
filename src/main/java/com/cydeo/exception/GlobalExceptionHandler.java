@@ -4,18 +4,26 @@ import com.cydeo.annotation.DefaultExceptionMessage;
 import com.cydeo.dto.DefaultExceptionMessageDTO;
 
 import com.cydeo.entity.ResponseWrapper;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.util.ObjectUtils;
 
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.HandlerMethod;
 
+import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.time.Instant;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 // interceptor: if any exception happens in this application, it needs to be intercepted and come to this class first
@@ -48,6 +56,29 @@ public class GlobalExceptionHandler {
                         .build(),
                 HttpStatus.FORBIDDEN);
     }
+
+    // validation
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ResponseWrapper> handleMethodArgumentNotValid(MethodArgumentNotValidException e, HttpServletRequest request) {
+
+
+        List<String> errors = e.getFieldErrors()
+                .stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .collect(Collectors.toList());
+
+
+        return ResponseEntity
+                .status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .body(
+                        ResponseWrapper.builder()
+                                .success(false)
+                                .message("Validation failed")
+                                .data(errors)
+                                .build()
+                );
+    }
+
 
     // any exception related with these 4 classes
     @ExceptionHandler({Exception.class, RuntimeException.class, Throwable.class, BadCredentialsException.class})
