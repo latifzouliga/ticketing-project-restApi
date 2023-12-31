@@ -15,7 +15,7 @@ public class UserDTO {
 
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "First name should not be empty")
     @Size(max = 15, min = 2)
     private String firstName;
 
@@ -23,7 +23,7 @@ public class UserDTO {
     @Size(max = 15, min = 2)
     private String lastName;
     @NotBlank
-    @Email
+//    @Email
     private String userName;
 
    // @NotBlank
