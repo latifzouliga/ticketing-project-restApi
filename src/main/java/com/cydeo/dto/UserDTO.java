@@ -15,18 +15,19 @@ public class UserDTO {
 
     private Long id;
 
-    @NotBlank(message = "First name should not be empty")
+    @NotBlank(message = "Can not be blank")
     @Size(max = 15, min = 2)
     private String firstName;
 
-    @NotBlank
+    @NotBlank(message = "Can not be blank")
     @Size(max = 15, min = 2)
     private String lastName;
-    @NotBlank
-//    @Email
+
+    //    @Email
+    @NotBlank(message = "can not be blank")
     private String userName;
 
-   // @NotBlank
+    @NotBlank(message = "can not be blank")
     //@Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{4,}")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String passWord;
@@ -37,8 +38,8 @@ public class UserDTO {
 
     private boolean enabled;
 
-    @NotBlank
-    @Pattern(regexp = "^\\d{10}$")
+
+    @Pattern(regexp = "^\\d{10}$",message = "must have 10 digits")
     private String phone;
 
     @NotNull

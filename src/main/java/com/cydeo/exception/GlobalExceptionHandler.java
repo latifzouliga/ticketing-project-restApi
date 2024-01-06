@@ -11,6 +11,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.util.ObjectUtils;
 
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -19,10 +20,7 @@ import org.springframework.web.method.HandlerMethod;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.time.Instant;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
@@ -59,24 +57,43 @@ public class GlobalExceptionHandler {
 
     // validation
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ResponseWrapper> handleMethodArgumentNotValid(MethodArgumentNotValidException e, HttpServletRequest request) {
+    public ResponseEntity<ResponseWrapper> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
 
+        Map<String, String> errors = new HashMap<>();
 
-        List<String> errors = e.getFieldErrors()
-                .stream()
-                .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                .collect(Collectors.toList());
-
+        ex.getBindingResult()
+                .getAllErrors()
+                .forEach(error -> {
+                    String fieldName = ((FieldError) error).getField();
+                    String errorMessage = error.getDefaultMessage();
+                    errors.put(fieldName, errorMessage);
+                });
+//        Map<String, List<String>> errors = new HashMap<>();
+//
+//        ex.getBindingResult()
+//                .getAllErrors()
+//                .forEach(error -> {
+//                    String fieldName = ((FieldError) error).getField();
+//                    String errorMessage = error.getDefaultMessage();
+//
+//                    // Collect errors by field name
+////                    errors.computeIfAbsent(fieldName, key -> new ArrayList<>()).add(errorMessage);
+//                    if (!errors.containsKey(fieldName)){
+//                        errors.put(fieldName,new ArrayList<>());
+//                    }
+//                        errors.get(fieldName).add(errorMessage);
+//
+//                });
 
         return ResponseEntity
                 .status(HttpStatus.UNPROCESSABLE_ENTITY)
                 .body(
                         ResponseWrapper.builder()
                                 .success(false)
-                                .message("Validation failed")
+                                .message("Validation error")
                                 .data(errors)
-                                .build()
-                );
+                                .build());
+
     }
 
 
