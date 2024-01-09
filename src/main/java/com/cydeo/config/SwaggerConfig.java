@@ -25,8 +25,7 @@ public class SwaggerConfig {
     public OpenAPI customOpenApi() {
         return new OpenAPI()
                 .info(getInfo())
-                .components(new Components()
-                        .addSecuritySchemes(OAUTH_SCHEME_NAME, createOAuthScheme()))
+                .components(new Components().addSecuritySchemes(OAUTH_SCHEME_NAME, createOAuthScheme()))
                 .addSecurityItem(new SecurityRequirement().addList(OAUTH_SCHEME_NAME));
     }
 
