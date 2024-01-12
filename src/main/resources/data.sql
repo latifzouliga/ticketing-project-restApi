@@ -6,9 +6,9 @@ VALUES ('2022-01-05 00:00:00', 1, false, '2022-01-05 00:00:00', 1, 'Admin'),
 
 insert into users(insert_date_time, insert_user_id, is_deleted, last_update_date_time, last_update_user_id, enabled,
                   first_name, gender, last_name, user_name, phone,role_id, pass_word)
-values ('2021-01-05 00:00:00', 1, false, '2021-01-05 00:00:00', 1, true, 'ozzy',      'MALE',  'can', 'ozzy','0321654987',1, '$2a$10$Q7ilQ6Hv11qpU0T7xfMzMeqxoPXkvhTVXxFqg0UL2xvLnhNqB7vba'),
-       ('2021-01-05 00:00:00', 1, false, '2021-01-05 00:00:00', 1, true, 'mike',      'MALE', 'woods', 'mike', '0321654987',2, '$2a$10$Q7ilQ6Hv11qpU0T7xfMzMeqxoPXkvhTVXxFqg0UL2xvLnhNqB7vba'),
-        ('2022-01-05 00:00:00', 1, false, '2022-01-05 00:00:00', 1, true, 'Samantha', 'FEMALE','Groves','samantha', '0321654987',  3,'$2a$10$Q7ilQ6Hv11qpU0T7xfMzMeqxoPXkvhTVXxFqg0UL2xvLnhNqB7vba');
+values ('2021-01-05 00:00:00', 1, false, '2021-01-05 00:00:00', 1, true, 'ozzy',      'MALE',  'can', 'ozzy@yallo.com','0321654987',1, '$2a$10$Q7ilQ6Hv11qpU0T7xfMzMeqxoPXkvhTVXxFqg0UL2xvLnhNqB7vba'),
+       ('2021-01-05 00:00:00', 1, false, '2021-01-05 00:00:00', 1, true, 'mike',      'MALE', 'woods', 'mike@yallo.com', '0321654987',2, '$2a$10$Q7ilQ6Hv11qpU0T7xfMzMeqxoPXkvhTVXxFqg0UL2xvLnhNqB7vba'),
+        ('2022-01-05 00:00:00', 1, false, '2022-01-05 00:00:00', 1, true, 'Samantha', 'FEMALE','Groves','samantha@yallo.com', '0321654987',  3,'$2a$10$Q7ilQ6Hv11qpU0T7xfMzMeqxoPXkvhTVXxFqg0UL2xvLnhNqB7vba');
 
 
 

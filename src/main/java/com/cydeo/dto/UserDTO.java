@@ -23,16 +23,16 @@ public class UserDTO {
     @Size(max = 15, min = 2)
     private String lastName;
 
-    //    @Email
+        @Email
     @NotBlank(message = "can not be blank")
     private String userName;
 
     @NotBlank(message = "can not be blank")
-    //@Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{4,}")
+    @Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{4,}")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String passWord;
 
-    //@NotNull
+    @NotNull
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String confirmPassWord;
 

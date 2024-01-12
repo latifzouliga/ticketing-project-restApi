@@ -61,7 +61,8 @@ public class UserController {
     @Operation(summary = "Create user")
     public ResponseEntity<ResponseWrapper> createUser(@Valid @RequestBody UserDTO userDTO) {
         userService.save(userDTO);
-        return ResponseEntity.status(HttpStatus.CREATED)
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
                 .body(
                         new ResponseWrapper("A new Spartan is created", userDTO, HttpStatus.CREATED)
                 );
@@ -70,11 +71,11 @@ public class UserController {
 
     @PutMapping
     @RolesAllowed("Admin")
-    @Operation(summary = "Update user")
-    private ResponseEntity<ResponseWrapper> updateUser(@RequestBody UserDTO userDTO) throws TicketingProjectException {
-        userService.update(userDTO);
+    @Operation(summary = "Update User")
+    public ResponseEntity<ResponseWrapper> updateUser( @Valid @RequestBody UserDTO user) throws TicketingProjectException {
+        userService.update(user);
         return ResponseEntity.ok(
-                new ResponseWrapper("User updated Successfully", userDTO, HttpStatus.OK)
+                new ResponseWrapper("User is successfully updated",user,HttpStatus.OK)
         );
     }
 
@@ -90,5 +91,6 @@ public class UserController {
         // return ResponseEntity.status(HttpStatus.NO_CONTENT)
         //       .body(new ResponseWrapper("User deleted Successfully", HttpStatus.NO_CONTENT));
     }
+
 
 }

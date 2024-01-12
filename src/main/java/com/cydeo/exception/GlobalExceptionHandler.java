@@ -117,7 +117,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(
                 ResponseWrapper.builder()
                         .success(false)
-                        .message("Action failed: An error occurred! You need to be careful bro!!!")
+//                        .message("Action failed: An error occurred! You need to be careful bro!!!")
+                        .message(defaultMessage.get().getMessage())
                         .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                         .build(),
                 HttpStatus.INTERNAL_SERVER_ERROR);

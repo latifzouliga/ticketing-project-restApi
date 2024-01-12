@@ -12,6 +12,7 @@ import com.cydeo.service.ProjectService;
 import com.cydeo.service.TaskService;
 import com.cydeo.service.UserService;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,12 +27,15 @@ public class UserServiceImpl implements UserService {
     private final TaskService taskService;
     private final KeycloakService keycloakService;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, ProjectService projectService, TaskService taskService, KeycloakService keycloakService) {
+    private final PasswordEncoder passwordEncoder;
+
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, ProjectService projectService, TaskService taskService, KeycloakService keycloakService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.projectService = projectService;
         this.taskService = taskService;
         this.keycloakService = keycloakService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -44,10 +48,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO findByUserName(String username) throws TicketingProjectException {
-        User user = userRepository
-//                .findByUserName(username).
-//                orElseThrow(() -> new TicketingProjectException("User can not be found"));;
-                .findAll().stream().filter(u -> u.getUserName().equals(username)).findFirst().get();
+        User user = userRepository.findByUserName(username)
+                .orElseThrow(() -> new TicketingProjectException("User can not be found"));
         return userMapper.convertToDTO(user);
     }
 
@@ -56,20 +58,21 @@ public class UserServiceImpl implements UserService {
 
         userDTO.setEnabled(true);
 
+        String encodedPassword = passwordEncoder.encode(userDTO.getPassWord());
+
         User obj = userMapper.convertToEntity(userDTO);
+        obj.setPassWord(encodedPassword);
 
         userRepository.save(obj);
+
         keycloakService.userCreate(userDTO);
 
     }
 
     @Override
     public UserDTO update(UserDTO dto) throws TicketingProjectException {
-
-       //Find current user
-        User user = userRepository
-                .findByUserName(dto.getUserName()).
-                orElseThrow(() -> new TicketingProjectException("User can not be found"));;
+        //Find current user
+        User user = userRepository.findByUserName(dto.getUserName()).orElseThrow(() -> new TicketingProjectException("User can not be found"));
         //Map updated user dto to entity object
         User convertedUser = userMapper.convertToEntity(dto);
         //set id to converted object
@@ -90,14 +93,15 @@ public class UserServiceImpl implements UserService {
     public void delete(String username) throws TicketingProjectException {
         User user = userRepository
                 .findByUserName(username).
-                orElseThrow(() -> new TicketingProjectException("User can not be found"));;
+                orElseThrow(() -> new TicketingProjectException("User can not be found"));
+        ;
 
         if (checkIfUserCanBeDeleted(user)) {
             user.setIsDeleted(true);
             user.setUserName(user.getUserName() + "-" + user.getId());
             userRepository.save(user);
             keycloakService.delete(username);
-        }else {
+        } else {
             throw new TicketingProjectException("User can not deleted");
         }
 
